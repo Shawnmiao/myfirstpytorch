@@ -1,0 +1,24 @@
+import torch
+from torch.autograd import Variable
+import torch.nn as nn
+import pandas as pd 
+from pandas import DataFrame
+import matplotlib.pyplot as plt
+import numpy as np
+from datetime import datetime
+
+dfa=pd.read_excel("accidents.xls")
+dfnew1=dfa["地点"]+(dfa["事故发生时间"].dt.year).astype(str)+(dfa["事故发生时间"].dt.month).astype(str)+\
+(dfa["事故发生时间"].dt.day).astype(str)+(dfa["事故发生时间"].dt.hour).astype(str)
+print("\033[0;37;40m\tdfnew1:\033[0m",dfnew1)
+print("---------------------")
+dfnew2=dfnew1.to_frame()##dfnew1 is Series
+dfnew2["time"]=dfa["事故发生时间"]
+print("\033[0;37;40m\t新的包含时间列的dfnew2:\033[0m",dfnew2)
+print("---------------------")
+chooses=dfnew2[0].drop_duplicates().index
+print("\033[0;37;40m\tchooses:\033[0m",chooses)
+print("---------------------")
+dfnew3=dfnew2.loc[chooses]
+print("\033[0;37;40m\t删除重复项的dfnew3:\033[0m",dfnew3)
+dfnew3.to_excel("new_a.xls")
