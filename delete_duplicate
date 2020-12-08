@@ -22,3 +22,28 @@ print("---------------------")
 dfnew3=dfnew2.loc[chooses]
 print("\033[0;37;40m\t删除重复项的dfnew3:\033[0m",dfnew3)
 dfnew3.to_excel("new_a.xls")
+##---------------------------------
+dfnew_a=pd.read_excel("new_a.xls")
+dfnew_a['hour']=dfnew_a["time"].dt.year.astype(str)+dfnew_a["time"].dt.month.astype(str)+\
+dfnew_a["time"].dt.day.astype(str)+\
+dfnew_a["time"].dt.hour.astype(str)
+print(dfnew_a)
+dfnew_a.loc[:,["hour"]].to_excel("new_ahour.xls")
+##-----------------------------------
+new_ahour=pd.read_excel("new_ahour.xls")
+# print(new_ahour)
+list_a=new_ahour["hour"].tolist()
+# list_set = list(set(list_a)) #List_set是另外一个列表，里面的内容是List里面的无重复项
+# print(list_set.sort(key=list_a))
+list_a_item=[]
+list_a_count=[]
+for item in list_a:##试过很多方法包括value_counts，列表自带count函数，但发现序号都已经混乱，无法体现时间先后，最后用这种方法
+     count=list_a.count(item)##即使使用set也会乱序
+     list_a_item.append(item)
+     list_a_count.append(count)
+dfnew_ahour=pd.DataFrame({"items":list_a_item,"counts":list_a_count})
+chooses=dfnew_ahour.drop_duplicates().index##唯有这个方法可以保持序列
+new_ahour_result=dfnew_ahour.loc[chooses]
+print(new_ahour_result)
+new_ahour.to_excel("new_ahour_result.xls")
+
