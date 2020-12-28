@@ -46,4 +46,83 @@ chooses=dfnew_ahour.drop_duplicates().index##唯有这个方法可以保持序�
 new_ahour_result=dfnew_ahour.loc[chooses]
 print(new_ahour_result)
 new_ahour.to_excel("new_ahour_result.xls")
+new122=pd.read_excel("new_122hour_result.xls")
+fig=plt.figure(figsize=(20,5))
+column_2018=new122.loc[new122["items"].astype(str).str.contains("2018")]##str.contain()使用前需要将该列使用astype(str)转化为str格式
+column_2019=new122.loc[new122["items"].astype(str).str.contains("2019")]
+print(column_2018)
+print(column_2019)
+font={'style':'italic'}
+ax1=fig.add_subplot(311)#1行2列第1列
+ax1.plot(column_2018["items"].astype(str),column_2018["counts"],color='b',linewidth=1.0,linestyle='-')
+ax1.tick_params("x",labelrotation=80,labelsize=6.0)##完美的介绍链接https://zhuanlan.zhihu.com/p/139052035
+ax2=fig.add_subplot(313)#1行2列第2列
+ax2.tick_params("x",labelrotation=80,labelsize=6.0)
+ax2.plot(column_2019["items"].astype(str),column_2019["counts"],color='b',linewidth=1.0,linestyle='-')
+# plt.tick_params(axis='x',tickdir='inout',labelsize=4)
+plt.show()
+##------------------------------星期
+new_ahour=pd.read_excel("122congestions_week.xls")
+print(new_ahour)
+new_ahour["ymd"]=new_ahour["报警时间"].dt.year.astype(str)+"-"+new_ahour["报警时间"].dt.month.astype(str)+"-"+new_ahour["报警时间"].dt.day.astype(str)
 
+# new122_20188=new122.loc[(new122["报警时间"].dt.year.astype(str)=="2018")&(new122["报警时间"].dt.month.astype(str)=="8"),["报警时间","week"]]
+# print(new122_20188)
+list_a=new_ahour["ymd"].tolist()
+# list_week=new_ahour["week"].tolist()
+# list_set = list(set(list_a)) #List_set是另外一个列表，里面的内容是List里面的无重复项
+# print(list_set.sort(key=list_a))
+list_a_item=[]
+list_a_count=[]
+list_a_week=[]
+for item in list_a:##试过很多方法包括value_counts，列表自带count函数，但发现序号都已经混乱，无法体现时间先后，最后用这种方法
+     count=list_a.count(item)##即使使用set也会乱序
+     list_a_item.append(item)
+     list_a_count.append(count)
+
+dfnew_ahour=pd.DataFrame({"items":list_a_item,"counts":list_a_count})
+dfnew_ahour["week"]=new_ahour["week"]
+chooses=dfnew_ahour.drop_duplicates().index##唯有这个方法可以保持序列
+new_ahour_result=dfnew_ahour.loc[chooses]
+print(new_ahour_result)
+new_ahour_result.to_excel("new122_result.xls")
+
+column_2018=new_ahour_result.loc[new_ahour_result["items"].astype(str).str.contains("2018")]##str.contain()使用前需要将该列使用astype(str)转化为str格式
+column_2019=new_ahour_result.loc[new_ahour_result["items"].astype(str).str.contains("2019")]
+print(column_2018)
+print(column_2019)
+# font={'style':'italic'}
+# plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+# plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+fig=plt.figure(figsize=(30,20))
+
+ax1=fig.add_subplot(811)#1行1列第1列
+ax1.plot(column_2018["items"].astype(str),column_2018["counts"],color='b',linewidth=1.0,linestyle='-')
+ax1.tick_params("x",labelrotation=80,labelsize=10.0)##完美的介绍链接https://zhuanlan.zhihu.com/p/139052035
+
+ax2=fig.add_subplot(813)#3行1列第1列
+ax2.tick_params("x",labelrotation=80,labelsize=10.0)
+ax2.plot(column_2019["items"].astype(str),column_2019["counts"],color='b',linewidth=1.0,linestyle='-')
+# plt.tick_params(axis='x',tickdir='inout',labelsize=4)
+
+# my_font=fm.FontProperties(fname=r'//Library/Fonts/Songti.ttc')
+ax3=fig.add_subplot(815)#1行1列第1列
+ax3.plot(np.arange(1,78),column_2018["counts"],color='b',linewidth=1.0,linestyle='-')
+# ax3.set_xticklabels(column_2018["week"].values,fontproperties=my_font,fontsize=10.0)
+ax3.tick_params("x",labelrotation=80,labelsize=10.0)##完美的介绍链接https://zhuanlan.zhihu.com/p/139052035
+
+# # print(column_2018["week"].values)
+# ax4=fig.add_subplot(817)#3行1列第1列
+# ax4.tick_params("x",labelrotation=80,labelsize=3.0)
+# ax4.plot(column_2019["week"].astype(str),column_2019["counts"],color='b',linewidth=1.0,linestyle='-')
+# # plt.tick_params(axis='x',tickdir='inout',labelsize=4)
+
+plt.show()
+##----------------------------判断规律性与稳定性
+dftest=adfuller(new_ahour["counts"])
+dftest[1]
+data={"counts":new_ahour["counts"].values}
+new_counts=pd.DataFrame(data,index=new_ahour["items"])
+new_counts.to_excel('new_counts.xls')
+dftest=adfuller(new_counts)
+dftest[1]##结果一样
