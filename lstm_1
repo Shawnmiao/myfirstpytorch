@@ -100,3 +100,7 @@ pred_test = pred.view(-1).data.numpy()  #转换成一维的ndarray数据，这�
 plt.plot(pred.view(-1).data.numpy(), 'r', label='prediction')
 plt.plot(dataY, 'b', label='real')
 plt.legend(loc='best')
+##------看参数
+for name, parameters in rnn.named_parameters():
+    print(name,":",parameters)
+    print(name,":",parameters.size())
